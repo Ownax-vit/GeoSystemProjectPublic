@@ -1,0 +1,115 @@
+body{
+font-family: 'Roboto Condensed', sans-serif;
+}
+a{
+color:black;
+}
+
+/* Стили цифровой карты */
+div#map {
+        width: 90%;
+        height: 75vh;
+        }
+
+/* ----------------- адаптация под мобилу------------------------*/
+@media screen and (max-width: 650px) {
+div#map {
+        width: 100%;
+        height: 100vh;
+        }
+.container-xl{
+    padding: 0;
+     width: 100%;
+
+}
+
+}
+
+
+
+.main-color-btn-custom{
+        background-color:#FFB500;
+        color: black;
+        border-color: #FFB500;
+}
+.main-color{
+    color:#FFB500;
+}
+
+.active{
+
+     background-color:#FFB500 !important;
+     color: white!important;
+     border-color: #FFB500 !important;
+
+}
+
+
+
+.buttonClick{
+    background-color:#FFB500;
+    color: white;
+    width:250px;
+    height:60px;
+    border: 1px solid #FFB500;
+    border-radius: 15px 20px;
+    transition: all 0.3s;
+
+}
+.buttonClick:hover{
+    background-color:rgb(13, 76, 212);
+    border: 1px solid rgb(13, 76, 212);
+
+}
+.buttonClickIntersection:hover{
+    background-color:green;
+    border: 1px solid rgb(13, 76, 212);
+
+}
+/* -----------ховер наведения на блоки исследования--------------------------*/
+.block-research-hover:hover{
+ transition: 0.25s;
+ transform:scale(1.05);
+ border: 3px solid red;
+ background-color:green;
+}
+
+/* -----------стили для прелоадера--------------------------*/
+.preloader {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  /* фоновый цвет */
+  background: #e0e0e0;
+  z-index: 1001;
+}
+
+.preloader__image {
+  position: relative;
+  top: 50%;
+  left: 50%;
+  width: 70px;
+  height: 70px;
+  margin-top: -35px;
+  margin-left: -35px;
+  text-align: center;
+  animation: preloader-rotate 2s infinite linear;
+}
+
+@keyframes preloader-rotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loaded_hiding .preloader {
+  transition: 0.3s opacity;
+  opacity: 0;
+}
+
+.loaded .preloader {
+  display: none;
+}

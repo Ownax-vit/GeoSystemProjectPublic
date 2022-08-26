@@ -1,0 +1,467 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    Исследование {{objectResearch.id}}
+{% endblock %}
+{% block libs %}
+
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    crossorigin="" >
+    <link rel="stylesheet" href="{% static 'libs/contextmenu-leaflet/dist/leaflet.contextmenu.css' %}"  />
+    <link rel="stylesheet" href="{% static 'libs/icons-leaflet/dist/leaflet.awesome-markers.css' %}"  />
+
+
+
+    <style>
+    /* Styles for leaflet fullscreen */
+                .leaflet-control-fullscreen a {
+                  background:#fff url({% static 'libs/fullscreen-leaflet/fullscreen.png' %}) no-repeat 0 0;
+                  background-size:26px 52px;
+                  }
+                  .leaflet-touch .leaflet-control-fullscreen a {
+                    background-position: 2px 2px;
+                    }
+                  .leaflet-fullscreen-on .leaflet-control-fullscreen a {
+                    background-position:0 -26px;
+                    }
+                  .leaflet-touch.leaflet-fullscreen-on .leaflet-control-fullscreen a {
+                    background-position: 2px -24px;
+                    }
+
+                /* Do not combine these two rules; IE will break. */
+                .leaflet-container:-webkit-full-screen {
+                  width:100%!important;
+                  height:100%!important;
+                  }
+                .leaflet-container.leaflet-fullscreen-on {
+                  width:100%!important;
+                  height:100%!important;
+                  }
+
+                .leaflet-pseudo-fullscreen {
+                  position:fixed!important;
+                  width:100%!important;
+                  height:100%!important;
+                  top:0!important;
+                  left:0!important;
+                  z-index:99999;
+                  }
+
+                @media
+                  (-webkit-min-device-pixel-ratio:2),
+                  (min-resolution:192dpi) {
+                    .leaflet-control-fullscreen a {
+                      background-image:url({% static 'libs/fullscreen-leaflet/fullscreen@2x.png' %});
+                    }
+                  }
+
+
+
+
+
+
+
+    </style>
+{{ form.media }}
+{% endblock %}
+
+
+
+{% block content %}
+
+<div class="d-flex flex-wrap  justify-content-center align-items-center mt-3 mb-5">
+<!--        <div class=" d-flex flex-wrap justify-content-center objects_bussiness mt-4">-->
+            <!--   центрирование карты-->
+
+
+
+
+            <div  id="map" class="map border mt-2 mb-4 shadow  bg-white rounded">
+
+            </div>
+
+
+
+                <button type="button"  class="buttonClick m-2"
+                        onClick="window.location='{% url 'create_ObjectBusiness-page' objectResearch.id %}';">
+                        Добавить объект бизнеса
+                </button>
+
+                <button type="button" class="buttonClick m-2"
+                        onClick="window.location='{% url 'create_ObjectInfrastructure-page' objectResearch.id %}';">
+                          Добавить объект инфраструктуры
+                </button>
+
+                <button type="button" class="buttonClick m-2 buttonClickIntersection"
+                        onClick="window.location='{% url 'calc_ObjectsIntersections' objectResearch.id %}';">
+                        Вычислить пересечения
+                </button>
+
+
+</div>
+
+        <!--    Панель добавления и нахождения пересечений    -->
+
+
+
+
+        <a class='mt-5' href="{% url 'all_ObjectsBusiness-page' objectResearch.id %} ">Все объекты бизнеса</a>
+
+        <div class="table-responsive">
+            <table class="table">
+                <thead class="table-dark">
+                            <th>id</th>
+                            <th>Дата изменения</th>
+                            <th>Наименование</th>
+                            <th>Адрес</th>
+                            <th>Радиус, м</th>
+                            <th>Подробно</th>
+
+                </thead>
+                <tbody>
+
+                        {% for obj in objectsBusiness %}
+                          <tr>
+                            <td>{{ obj.id }}</td>
+                            <td>{{ obj.date }}</td>
+                            <td>{{ obj.name }}</td>
+                            <td>{{ obj.address }}</td>
+                            <td>{{ obj.radius|floatformat:"2" }}</td>
+                            <td>
+                                <a href="{% url 'edit_ObjectBusiness-page' objectResearch.id obj.id%}">
+                                    Редактировать
+                                </a>
+                            </td>
+
+                          </tr>
+                        {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+
+
+            <a href="{% url 'all_ObjectsInfrastructure-page' objectResearch.id %}">Все объекты инфраструктуры</a>
+    <div class="table-responsive">
+             <table class="table ">
+                <thead class="table-dark">
+                            <th>id</th>
+                            <th>Дата изменения</th>
+                            <th>Наименование</th>
+                            <th>Адрес</th>
+                            <th>Радиус, м</th>
+                            <th>Подробно</th>
+
+                </thead>
+                <tbody>
+
+                        {% for obj in objectsInfrastructure %}
+                          <tr>
+                            <td>{{ obj.id }}</td>
+                            <td>{{ obj.date }}</td>
+                            <td>{{ obj.name }}</td>
+                            <td>{{ obj.address }}</td>
+                            <td>{{ obj.radius|floatformat:"2"}}</td>
+                            <td>
+                                <a href="{% url 'edit_ObjectInfrastructure-page' objectResearch.id obj.id %}">
+                                    Редактировать
+                                </a>
+                            </td>
+
+                          </tr>
+                        {% endfor %}
+
+                </tbody>
+            </table>
+    </div>
+
+
+             <a href="{% url 'all_ObjectsIntersections-page' objectResearch.id %}">Все объекты пересечения</a>
+    <div class="table-responsive">
+            <table class="table ">
+                <thead class="table-dark" >
+                            <th>id</th>
+                            <th>объект бизнеса</th>
+                            <th>объект инфраструктуры</th>
+                            <th>Площадь, м<sup>2</sup></th>
+                            <th>Подробно</th>
+
+                </thead>
+                <tbody>
+
+                        {% for obj in objectsIntersections %}
+                          <tr>
+                            <td>{{ obj.id }}</td>
+                            <td>{{ obj.obj_business.id  }} {{ obj.obj_business.name }}</td>
+                            <td>{{ obj.obj_infrastructure.id }} {{ obj.obj_infrastructure.name}}</td>
+                            <td>{{ obj.area|floatformat:"2"}}</td>
+                            <td>
+                                <a href="{% url 'view_ObjectIntersections-page' obj.id %}">
+                                    Просмотр на карте
+                                </a>
+                            </td>
+
+                          </tr>
+                        {% endfor %}
+
+                </tbody>
+            </table>
+         </div>
+
+            <a href="{% url 'all_ObjectBusinessRange-page' objectResearch.id %}">Все ранжированные объекты</a>
+        <div class="table-responsive">
+            <table class="table ">
+                <thead class="table-dark" >
+                            <th>id</th>
+                            <th>Наименование</th>
+                            <th>Радиус, м</th>
+                            <th>Площадь помещения, м<sup>2</sup></th>
+                            <th>Стоимость, руб</th>
+                            <th>Плотность населения, чел/га</th>
+                            <th>Расстояние безразличия, м</th>
+                            <th>Макс площадь пересечения, м<sup>2</sup></th>
+                            <th>Подробно</th>
+
+                </thead>
+                <tbody>
+                        {% for obj in objectsBusinessRang %}
+                          <tr>
+                            <td>{{ obj.id }}</td>
+                            <td>{{ obj.name }} </td>
+                              <td>{{ obj.radius|floatformat:"2"}}</td>
+                              <td>{{ obj.area }}</td>
+                              <td>{{ obj.rent_price }}</td>
+                              <td>{{ obj.pop }}</td>
+                              <td>{{ obj.dist_of_ind }}</td>
+                            <td>{{ obj.max_area|floatformat:"2"}}</td>
+                            <td>
+                                <a href="{% url 'edit_ObjectBusiness-page' objectResearch.id obj.id %}">
+                                    Подробнее
+                                </a>
+                            </td>
+                          </tr>
+                        {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+
+
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" crossorigin=""></script>
+<script src="{% static 'libs/fullscreen-leaflet/Leaflet.fullscreen.min.js'%}"></script>
+<script src="{% static 'libs/contextmenu-leaflet/dist/leaflet.contextmenu.js'%}"></script>
+<script src="{% static 'libs/leaflet-ajax/dist/leaflet.ajax.js' %}"></script>
+<script src="{% static 'libs/icons-leaflet/dist/leaflet.awesome-markers.js' %}"></script>
+
+
+<script type="module" src="https://unpkg.com/ionicons@5.4.0/dist/ionicons/ionicons.esm.js"></script>
+
+<script>
+
+        const attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+
+
+        let styleBusinessCircle = {
+                color: "blue",
+                weight: 1,
+                opacity: 1,
+                fillColor: "blue",
+                fillOpacity: 0.2,
+
+            };
+        let styleInfrastructureCircle = {
+                color: "red",
+                weight: 1,
+                opacity: 1,
+                fillColor: "red",
+                fillOpacity: 0.2,
+
+            };
+        let styleIntersectionsCircle = {
+                color: "lime",
+                weight: 1,
+                opacity: 1,
+                fillOpacity: 0.2,
+
+            };
+
+
+
+        const OSM = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: attribution });
+        const Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+        });
+        const HikeBike_HikeBike = L.tileLayer('https://tiles.wmflabs.org/hikebike/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        });
+        const Mapbox = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors,'+
+            'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+            maxZoom: 18,
+            id: 'mapbox/streets-v11',
+            tileSize: 512,
+            zoomOffset: -1,
+            accessToken:'pk.eyJ1Ijoib3duYXgiLCJhIjoiY2twYzlmaGR6MDF2dDJ3cDdmd3R3bzkweSJ9.BMnLEz4XJrwhNofTPxpyhg',
+        })
+
+
+        const mB = new L.GeoJSON.AJAX('{% url 'object_business_dataset' objectResearch.id %}', {
+                        pointToLayer: createCustomIconBusiness,
+                        onEachFeature: onEachFeature,
+
+                    });
+
+
+        const mI = new L.GeoJSON.AJAX('{% url 'object_infrastructure_dataset' objectResearch.id %}', {
+                   onEachFeature: onEachFeature,
+                   pointToLayer: createCustomIconInfrastructure,
+
+        });
+
+        const cB = new L.GeoJSON.AJAX('{% url 'object_businessCircle_dataset' objectResearch.id %}', {
+                    style: styleBusinessCircle,
+                    onEachFeature:onEachFeatureCircleRadius
+                    });
+
+        const cI = new L.GeoJSON.AJAX('{% url 'object_infrastructureCircle_dataset' objectResearch.id %}', {
+                     style: styleInfrastructureCircle,
+                     onEachFeature:onEachFeatureCircleRadius
+                     });
+
+        const cIntersection = new L.GeoJSON.AJAX('{% url 'object_intersections_dataset' objectResearch.id %}',{
+                    style: styleIntersectionsCircle,
+                    onEachFeature:onEachFeatureArea
+                    });
+
+        var map = L.map('map', {
+            center: [50.5984208008572,36.58824921758033],
+            zoom: 12,
+            minZoom: 9,
+            layers: [Mapbox,  cB, cI,  cIntersection, mB, mI],
+
+
+            fullscreenControl: {
+                  pseudoFullscreen: false
+            },
+            contextmenu: true,
+            contextmenuWidth: 140,
+            contextmenuItems: [{
+                  text: 'Координаты',
+                  callback: showCoordinates
+              }, {
+                  text: 'Центрировать',
+                  callback: centerMap
+              }, '-', {
+                  text: 'Приблизить',
+                  icon: '{% static 'libs/contextmenu-leaflet/dist/images/zoom-in.png' %}',
+                  callback: zoomIn
+              }, {
+                  text: 'Отдалить',
+                  icon: '{% static 'libs/contextmenu-leaflet/dist/images/zoom-out.png' %}',
+                  callback: zoomOut
+          }],
+        });
+        L.control.scale({imperial:false}).addTo(map);
+
+        const baseLayers = {
+            "OpenStreetMap": OSM,
+            "Mapbox": Mapbox,
+            "Esri_WorldImagery":Esri_WorldImagery,
+            "HikeBike_HikeBike": HikeBike_HikeBike,
+        };
+        const overlayMaps = {
+            "Бизнес": mB,
+            "Инфраструктура": mI,
+            'Окружности бизнеса': cB,
+            'Окружности инфраструктуры': cI,
+            'Зоны пересечения': cIntersection,
+        };
+
+        L.control.layers(baseLayers,overlayMaps).addTo(map);
+
+
+        function onEachFeature(feature, layer) {
+            // does this feature have a property named popupContent?
+            if (feature.properties && feature.properties.pk){
+                layer.bindPopup('id:'+ feature.properties.pk +'<br>'+ feature.properties.name);
+
+            }
+        }
+        function onEachFeatureArea(feature, layer) {
+            // does this feature have a property named popupContent?
+            if (feature.properties && feature.properties.area){
+                layer.bindPopup('id:'+feature.properties.pk +'<br> Площадь: '+
+                Math.round(feature.properties.area) + ' кв.м.');
+
+            }
+        }
+        function onEachFeatureCircleRadius(feature, layer) {
+            // does this feature have a property named popupContent?
+            if (feature.properties && feature.properties.radius){
+                layer.bindPopup('id геообъекта:'+feature.properties.pk +'<br> Радиус: '+
+                Math.round(feature.properties.radius) + ' м');
+
+            }
+        }
+
+
+         // добавление иконок и ховера подписей к объектам бизнеса
+        function createCustomIconBusiness (feature, latlng) {
+
+          let myIcon = L.AwesomeMarkers.icon({
+                icon: '',
+                prefix: 'fa',
+                markerColor: 'darkblue',
+                spin:false,
+                html: feature.properties.pk,
+          });
+
+          l = L.marker(latlng, { icon: myIcon }).bindTooltip(
+              feature.properties.pk + '<br>' + feature.properties.name ).openTooltip();
+
+          return l
+        }
+        // добавление иконок к объектам инфраструктуры
+        function createCustomIconInfrastructure (feature, latlng) {
+          let myStyle = {
+                radius: 7,
+                fillColor: "#ff0a0a",
+                color: "black",
+
+                weight: 1,
+                opacity: 1,
+                fillOpacity: 0.8
+
+          };
+
+          l = L.circleMarker(latlng, myStyle );
+
+          return l
+        }
+
+        /* Context menu functions */
+         function showCoordinates (e) {
+	      alert(e.latlng);
+          }
+
+         function centerMap (e) {
+              map.panTo(e.latlng);
+          }
+
+         function zoomIn (e) {
+              map.zoomIn();
+          }
+
+         function zoomOut (e) {
+              map.zoomOut();
+          }
+
+
+
+
+
+
+</script>
+
+{% endblock %}

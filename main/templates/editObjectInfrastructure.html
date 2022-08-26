@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+  {{title}} объекта инфраструктуры
+{% endblock %}
+
+
+
+{% block content %}
+
+
+
+<div class="container-xl col-10 mt-4 ">
+        <a class='ms-5' href="{% url 'working_ObjectResearch-page' objectResearch_id %}">Назад</a>
+            <h2 class="m-4"><b>{{ title }} объекта инфраструктуры</b></h2>
+
+        <form class='row g-2 border border-warning
+    shadow p-5 mb-5 rounded border-2 rounded-start '
+              id='create_objectInfrastructure' action="" method="post">
+         {% csrf_token %}
+            {{ form.media }}
+                     {{ form.non_field_errors }}
+            {% if edit_mode %}
+                    <div class="fieldWrapper ">
+                        {{ form.id.errors }}
+                        <label for="{{ form.id.id_for_label }}">id:</label>
+                        {{ form.id }}
+                    </div>
+                    <div class="fieldWrapper col-md-6">
+                        {{ form.author.errors}}
+                        <i class="bi bi-file-earmark-person"></i>
+                        <label  for="{{ form.author.id_for_label }}"> Автор: </label>
+                        {{ form.author }}
+                    </div>
+                    <div class="fieldWrapper col-md-6">
+                        {{ form.date.errors}}
+                        <i class="bi bi-calendar-date " ></i>
+                        <label for="{{ form.date.id_for_label }}"> Дата: </label>
+                        {{ form.date}}
+                    </div>
+
+            {% endif %}
+                    <div class="fieldWrapper col-md-6">
+                        {{ form.name.errors}}
+                             <img class="" src="{% static 'img/icons/title.svg' %}"
+                          width="18px" alt="title icon">
+                        <label for="{{ form.name.id_for_label }}"> Наименование: </label>
+                        {{ form.name}}
+                    </div>
+                    <div class="fieldWrapper col-12">
+                        {{ form.address.errors}}
+                        <i class="bi bi-geo-alt"></i>
+                        <label for="{{ form.address.id_for_label }}"> Адрес: </label>
+                        {{ form.address}}
+                    </div>
+
+
+                    <p class="fieldWrapper">
+                        {{ form.radius.errors}}
+                        <img src="{% static 'img/icons/radius_icn.png' %}" width="18px" alt="">
+                        <label for="{{ form.radius.id_for_label }}"> Радиус, м: </label>
+                        {{ form.radius   }}
+                    </p>
+
+                <hr class="main-color">
+                     <div class="fieldWrapper col-md-6">
+                        {{ form.long.errors}}
+                        <label for="{{ form.long.id_for_label }}"> Долгота: </label>
+                        {{ form.long }}
+                    </div>
+                    <div class="fieldWrapper col-md-6">
+                        {{ form.lat.errors}}
+                        <label for="{{ form.lat.id_for_label }}">  Широта: </label>
+                        {{ form.lat }}
+                    </div>
+                     <div  class="form-text">
+                           Внимание, при указании местоположения приоритет уделяется долготе и широте! <br>
+                           Если вы хотите указать местоположение на цифровой карте,
+                         не указывайте данные в географических координатах!
+                     </div>
+
+                    <div class="fieldWrapper col-sm-8">
+                        {{ form.geom.errors}}
+                       <p>
+                           <label for="{{ form.geom.id_for_label }}">
+                               Или укажите точку инфраструктуры на карте:
+                           </label>
+                       </p>
+                        {{ form.geom}}
+                    </div>
+
+
+                     </br>
+
+            {% if edit_mode  %}
+                        <div class="fieldWrapper">
+                            {{ form.circle.errors}}
+                           <p><label for="{{ form.circle.id_for_label }}">Построенная окружность: </label></p>
+                            {{ form.circle }}
+                        </div>
+            {% endif %}
+             <div class="d-flex justify-content-between mt-3">
+                    <button form='create_objectInfrastructure' type="submit" class="btn btn-primary">
+                        {{ titleButton }}
+                    </button>
+
+            {% if edit_mode %}
+                        <button href="javascript:void()" form='delete_form' type='button' onclick="delete_question()"
+                                class="btn btn-danger m-2 ms-5">
+                                Удалить
+                        </button>
+             {% endif %}
+            </div>
+        </form>
+
+
+
+
+
+        {% if edit_mode %}
+            <form id='delete_form'
+                  action="{% url 'delete_ObjectInfrastructure' objectResearch_id  objectInfrastructure_id  %}"
+                  method="post">
+                                {% csrf_token %}
+            </form>
+                            <script>
+                                function delete_question(){
+                                    if (confirm('Вы уверены?')){
+                                        document.getElementById('delete_form').submit()
+                                    }
+                                }
+                            </script>
+    {% endif %}
+
+</div>
+
+
+{% endblock %}

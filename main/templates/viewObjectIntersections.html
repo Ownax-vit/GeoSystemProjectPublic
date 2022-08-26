@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+  Просмотр объекта пересечения {{ objectIntersection.id }}
+{% endblock %}
+
+
+
+{% block content %}
+
+
+
+<div class="container-xl col-10 mt-4 ">
+        <a class='ms-5' href="{% url 'working_ObjectResearch-page' objectResearch_id %}">Назад</a>
+    <h2> <b>Просмотр объекта пересечения {{ objectIntersection.id }}</b></h2>
+        <form class='row g-3 border border-warning
+    shadow p-3 mb-5 rounded border-2 rounded-start' action="">
+            {{ form.media }}
+            {{ form.as_p}}
+
+        </form>
+
+
+
+</div>
+
+{% endblock %}

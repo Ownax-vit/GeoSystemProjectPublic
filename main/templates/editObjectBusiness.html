@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+  {{title}} объекта бизнеса
+{% endblock %}
+
+        {% block libs %}
+    <!--    Для доп либ -->
+<meta name="viewport" content="width=device-width, initial-scale=0.3">
+    {% endblock %}
+
+
+{% block content %}
+
+<div class="container col-10 mt-4 " >
+        <a class='ms-5' href="{% url 'working_ObjectResearch-page' objectResearch_id %}">Назад</a>
+        <h2 class="m-4"><b>{{ title }} объекта бизнеса</b></h2>
+    <form class='row g-2 border border-warning
+    shadow p-5 mb-5  border-2  rounded rounded-start rounded-3 '
+              id='create_objectBussiness' action="" method="post">
+         {% csrf_token %}
+            {{ form.media }}
+                     {{ form.non_field_errors }}
+          {% if edit_mode %}
+                    <div class="fieldWrapper ">
+                        {{ form.id.errors }}
+                        <label for="{{ form.id.id_for_label }}">id:</label>
+                        {{ form.id }}
+                    </div>
+                    <div class="fieldWrapper col-md-6">
+                        {{ form.author.errors}}
+                         <i class="bi bi-file-earmark-person"></i>
+                        <label  for="{{ form.author.id_for_label }}"> Автор: </label>
+                        {{ form.author }}
+                    </div>
+                    <div class="fieldWrapper col-md-6">
+                        {{ form.date.errors}}
+                        <i class="bi bi-calendar-date"></i>
+                        <label for="{{ form.date.id_for_label }}"> Дата: </label>
+                        {{ form.date}}
+                    </div>
+
+            {% endif %}
+                    <div class="fieldWrapper col-md-6">
+                        {{ form.name.errors}}
+                         <img class="" src="{% static 'img/icons/title.svg' %}"
+                          width="18px" alt="title icon">
+                        <label for="{{ form.name.id_for_label }}"> Наименование: </label>
+                        {{ form.name}}
+                    </div>
+                    <div class="fieldWrapper col-12">
+                        {{ form.address.errors}}
+                        <i class="bi bi-geo-alt"></i>
+                        <label for="{{ form.address.id_for_label }}"> Адрес: </label>
+                        {{ form.address}}
+                    </div>
+                    <div class="fieldWrapper col-12">
+                        {{ form.source.errors}}
+                        <i class="bi bi-link-45deg"></i>
+                        <label for="{{ form.source.id_for_label }}"> Источник: </label>
+                        {{ form.source }}
+                    </div>
+                    <div class="fieldWrapper col-md-3">
+                        {{ form.rent_price.errors}}
+                        <i class="fas fa-ruble-sign"></i>
+                        <label for="{{ form.rent_price.id_for_label }}"> Стоимость аренды, руб: </label>
+                        {{ form.rent_price }}
+                    </div>
+                    <div class="fieldWrapper col-md-3">
+                        {{ form.area.errors}}
+                         <img src="{% static 'img/icons/area.svg' %}" width="18px" alt="radius icon">
+                        <label for="{{ form.area.id_for_label }}"> Площадь помещения, м<sup>2</sup>: </label>
+                        {{ form.area}}
+                    </div>
+                    <div class="fieldWrapper col-md-3">
+                        {{ form.pop.errors}}
+                        <i class="fas fa-users "></i>
+                        <label for="{{ form.pop.id_for_label }}"> Плотность населения, чел/га: </label>
+                        {{ form.pop }}
+                    </div>
+
+                    <div class="fieldWrapper col-md-3">
+                        {{ form.dist_of_ind.errors}}
+                        <img src="{% static 'img/icons/distance.svg' %}" width="18px" alt="radius icon">
+                        <label for="{{ form.dist_of_ind.id_for_label }}"> Расстояние безразличия, м: </label>
+                        {{ form.dist_of_ind}}
+                    </div>
+             {% if edit_mode %}
+                     <p class="fieldWrapper input-group">
+                           {{ form.radius.errors }}
+                        <img class="me-1" src="{% static 'img/icons/radius.svg' %}"
+                             width="18px" height="18" alt="radius icon">
+<!--                         непонятки с радиусом, нужно украсить выделить в форме для красоты-->
+
+
+                        <label for="{{ form.radius.id_for_label }}">  Радиус, м: </label>
+                        {{ form.radius }}
+                    </p>
+            {% endif %}
+        <hr class="main-color">
+
+                     <div class="fieldWrapper col-md-6">
+                        {{ form.long.errors}}
+                        <label for="{{ form.long.id_for_label }}"> Долгота: </label>
+                        {{ form.long }}
+                    </div>
+                    <div class="fieldWrapper col-md-6">
+                        {{ form.lat.errors}}
+                        <label for="{{ form.lat.id_for_label }}">  Широта: </label>
+                        {{ form.lat }}
+                    </div>
+                      <div  class="form-text">
+                           Внимание, при указании местоположения приоритет уделяется долготе и широте! <br>
+                           Если вы хотите указать местоположение на цифровой карте,
+                          не указывайте данные в географических координатах!
+                      </div>
+
+                    <div class="fieldWrapper col-sm-8">
+                        {{ form.geom.errors}}
+                       <p><label for="{{ form.geom.id_for_label }}">Или укажите точку бизнеса на карте: </label></p>
+                        {{ form.geom}}
+                    </div>
+
+
+                     </br>
+
+            {% if edit_mode  %}
+                        <div class="fieldWrapper">
+                            {{ form.circle.errors}}
+                           <p><label for="{{ form.circle.id_for_label }}">Построенная окружность: </label></p>
+                            {{ form.circle }}
+                        </div>
+            {% endif %}
+             <div class="d-flex justify-content-between mt-3">
+                    <button form='create_objectBussiness' type="submit" class="btn btn-primary">
+                        {{ titleButton }}
+                    </button>
+
+            {% if edit_mode %}
+                        <button href="javascript:void()" form='delete_form' type='button' onclick="delete_question()"
+                                class="btn btn-danger m-2 ms-5">
+                    Удалить
+                        </button>
+             {% endif %}
+            </div>
+        </form>
+
+
+
+
+
+        {% if edit_mode %}
+            <form id='delete_form' action="{% url 'delete_ObjectBusiness'  objectBusiness_id  %}"
+                  method="post">
+                                {% csrf_token %}
+            </form>
+                            <script>
+                                function delete_question(){
+                                    if (confirm('Вы уверены?')){
+                                        document.getElementById('delete_form').submit()
+                                    }
+                                }
+                            </script>
+    {% endif %}
+
+</div>
+
+{% endblock %}

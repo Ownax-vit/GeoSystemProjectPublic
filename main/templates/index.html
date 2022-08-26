@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% block title %}
+  Главная
+{% endblock %}
+{% block libs %}
+<!--  <link rel="stylesheet" href="{% static 'libs/v6.5.0-dist/ol.css' %}">-->
+<!--  <script type='module' src="{% static 'libs/v6.5.0-dist/ol.js' %}"></script>-->
+    <script src="https://unpkg.com/elm-pep"></script>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/css/ol.css"
+          type="text/css">
+    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js">
+    </script>
+<script>
+</script>
+
+
+{% endblock %}
+
+
+{% block content %}
+
+
+
+
+      <h1> <b>Список исследований:</b></h1>
+      <a href="{% url 'create_objectResearch-page' %}">Создать</a>
+
+
+
+    {% if list_objectsResearch %}
+        <div class="d-flex flex-wrap bd-highlight justify-content-center">
+
+        {% for object in page_obj %}
+           <div class="d-flex flex-column justify-content-end block-research-hover  border
+           shadow p-3 mb-5 bg-white rounded  p-5 m-2 text-center " style="width:350px;">
+
+              <div class="card-header">
+
+                <strong>{{ object.name }}</strong>
+
+              </div>
+               <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        Идентификатор: <b class="main-color"><i>{{ object.id}}</i></b>
+                    </li>
+
+                   <li class="list-group-item">
+                       <i class="bi bi-calendar-date"></i> Дата создания: <br><span>{{ object.date_create }}</span>
+                   </li>
+                   <li class="list-group-item">
+                       <i class="bi bi-file-earmark-person"></i>
+                       <span> Автор инициации: {{ object.author }}</span>
+                   </li>
+
+
+
+               </ul>
+
+<!--               <button type="submit" onclick="window.location='edit_objectsResearch/{{ object.id }}';">-->
+<!--                   Начать работу-->
+<!--               </button>-->
+               <a class='btn btn-primary main-color-btn-custom'
+                  href="{% url 'working_ObjectResearch-page' object.id %}">
+                   Начать работу
+               </a>
+               <b><a href="{% url 'edit_objectResearch-page' object.id %}">Редактировать данные исследования</a></b>
+           </div>
+        {% endfor %}
+
+
+
+        </div>
+
+        {% if page_obj.paginator.num_pages > 1 %}
+            <div class="pagination">
+                <span class="step-links">
+                    {% if page_obj.has_previous %}
+                        <a href="?page=1">&laquo; first</a>
+                        <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                    {% endif %}
+
+                    <span class="current">
+                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                    </span>
+
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}">next</a>
+                        <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                    {% endif %}
+                </span>
+            </div>
+        {% endif %}
+
+
+
+
+    {% else %}
+     <p class="m-5 alert alert-warning">Исследования не найдены</p>
+
+    {% endif %}
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}
+
+
+

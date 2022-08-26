@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block libs %}
+{% endblock %}
+{% block content %}
+    <div class="bg-warning">
+                {% if form.errors %}
+              <p>Логин или пароль неверны! Убедитесь в правильности вводимых данных!</p>
+            {% endif %}
+
+            {% if next %}
+              {% if user.is_authenticated %}
+                <p>Ваш аккаунт не имеет доступа к этой странице!.</p>
+              {% else %}
+                <p>Пожалуйста, войдите в систему чтобы получить доступ к этой странице!</p>
+              {% endif %}
+            {% endif %}
+    </div>
+
+<div class="container-xl col-8 mt-4 ">
+                    <form class="form-control
+                    border border-warning
+                    shadow p-5 mb-5 bg-white rounded"
+                          method="post" action="{% url 'login' %}">
+                    {% csrf_token %}
+                      <div class="fieldWrapper m-2 ">
+                        <label for="{{ form.username.id_for_label }}"
+                               class="form-label">{{ form.username.label_tag }}</label><br>
+                        {{ form.username }}
+                        <div id="loginHelp" class="form-text">
+                            Введите ваш логин и пароль,
+                            либо попросите администратора зарегистрировать вас
+                        </div>
+                      </div>
+                        <div class="fieldWrapper m-2">
+                            <label for="{{ form.password.id_for_label }}"
+                                   class="form-label"> {{ form.password.label_tag }}</label><br>
+                                   {{ form.password }}
+                        </div>
+
+
+
+
+                    <input  class="btn ms-2 btn-primary" type="submit" value="Войти" />
+                    <input type="hidden" name="next" value="{{ next }}" />
+                    </form>
+
+    </div>
+
+
+{% endblock %}

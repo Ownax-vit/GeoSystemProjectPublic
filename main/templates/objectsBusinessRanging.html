@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+  Все объекты бизнеса
+{% endblock %}
+
+{% block content %}
+
+
+    <h2 class="m-4"><b>Ранжированные объекты бизнеса </b></h2>
+
+
+
+
+
+
+    {% if not page_obj %}
+        <h2 class="m-5 alert alert-warning"> Ранжированные объекты бизнеса не найдены!</h2>
+    {% else %}
+
+    <div class="block-Char">
+        <h4>Диаграмма максимальной зоны</h4>
+         <canvas id="myChartMaxArea" width="450" height="100">
+             <p>Извините, но ваш браузер не поддерживает отображение диаграммы!</p>
+         </canvas>
+    </div>
+
+     <div class="block-Char">
+         <h4>Диаграмма радиусов </h4>
+         <canvas id="myChartRadius" width="450" height="100">
+             <p>Извините, но ваш браузер не поддерживает отображение диаграммы!</p>
+         </canvas>
+    </div>
+    <div class="panel border d-flex justify-content-around align-items-center">
+
+
+                Средняя аренднаяя стоимость:
+
+                {{ avgRent.avg|floatformat:"2" }}
+                <div class="export-btn  d-flex justify-content-center align-items-center me-5">
+                 <a style="font-size: 24px; color: #FFB500;"
+                    href="{% url 'exportXLX_ObjectsBusinessRang' objectResearch_id %}">
+                    <span class="fas fa-file-excel"></span>
+                </a>
+
+                   <a class='ms-5' style="font-size: 24px; color: #FFB500;"
+                   href="{% url 'exportCSV_ObjectsBusinessRang' objectResearch_id %}">
+                     <span class="fas fa-file-csv"></span>
+                </a>
+
+                </div>
+
+
+    </div>
+
+    <div class="table-responsive">
+     <table class="table ">
+                <thead class="table-dark">
+                            <th>id</th>
+                            <th>Наименование</th>
+                            <th>Радиус, м</th>
+                            <th>Площадь помещения, м<sup>2</sup></th>
+                            <th>Стоимость, руб</th>
+                            <th>Плотность населения, чел/га</th>
+                            <th>Расстояние безразличия, м</th>
+                            <th>Макс площадь пересечения, м<sup>2</sup></th>
+                            <th>Подробно</th>
+
+                </thead>
+                <tbody>
+                        {% for obj in page_obj %}
+                          <tr>
+                            <td>{{ obj.id }}</td>
+                               <td>{{ obj.name }} </td>
+                              <td>{{ obj.radius|floatformat:"2" }}</td>
+                              <td>{{ obj.area }}</td>
+                              <td>{{ obj.rent_price }}</td>
+                              <td>{{ obj.pop }}</td>
+                              <td>{{ obj.dist_of_ind }}</td>
+                            <td>{{ obj.max_area|floatformat:"2"}}</td>
+                            <td><a href="{% url 'edit_ObjectBusiness-page' objectResearch_id obj.id %}">
+                                Подробнее</a></td>
+                          </tr>
+                        {% endfor %}
+
+                </tbody>
+            </table>
+    </div>
+
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+
+    {% endif %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.1.1/dist/chart.min.js" crossorigin=""></script>
+<script>
+
+    const dataMaxArea = {
+        labels: [{% for i in all_objects_business %} {{ i.id|safe}},{% endfor %}],
+        datasets: [{
+                label: 'Mаксимальные зоны пересечений',
+                data: [{% for i in all_objects_business %}
+                            {% if i.max_area == None %}
+                                0,
+                            {% else %}
+                                 {{ i.max_area|safe  }},
+                             {% endif %}
+                       {% endfor %}
+                       ],
+                borderColor: 'rgb(255, 181, 0)',
+                backgroundColor: 'rgb(146, 156, 149)',
+        }],
+    };
+    const configMaxArea = {
+        type: 'line',
+        data: dataMaxArea,
+        options: {
+                  scales: {
+                    y: {
+                      title: {
+                        display: true,
+                        text: 'Площадь ',
+                      }
+                    },
+                     x: {
+                      title: {
+                        display: true,
+                        text: 'Идентификатор объекта бизнеса'
+                      }
+                    }
+                  }
+         }
+    };
+
+    let MyCharMaxArea = new Chart(
+        document.getElementById('myChartMaxArea'),
+        configMaxArea
+     );
+     // ------------------------------------------------
+
+      const dataRadius = {
+        labels: [{% for i in all_objects_business %} {{ i.id|safe }},{% endfor %}],
+        datasets: [{
+                label: 'Радиусы объектов бизнеса',
+                data: [{% for i in all_objects_business %}{{ i.radius|safe }},{% endfor %}
+                       ],
+                borderColor: 'rgb(255, 181, 0)',
+                backgroundColor: 'rgb(146, 156, 149)',
+        }],
+    };
+    const configRadius = {
+        type: 'line',
+        data: dataRadius,
+        options: {
+                  scales: {
+                    y: {
+                      title: {
+                        display: true,
+                        text: 'Радиус ',
+                      }
+                    },
+                     x: {
+                      title: {
+                        display: true,
+                        text: 'Идентификатор объекта бизнеса'
+                      }
+                    }
+                  }
+         }
+    };
+
+    let MyCharRadius = new Chart(
+        document.getElementById('myChartRadius'),
+        configRadius
+     );
+
+
+</script>
+{% endblock %}

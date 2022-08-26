@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    {{ title }} исследования
+{% endblock %}
+
+{% block content %}
+
+<div class="container-xl col-10 mt-4 ">
+
+    <a class="" href="/">Назад</a>
+    <h2 class="m-4"><b>{{ title }} исследования</b></h2>
+
+    <form  class="row g-2 form-control border border-warning
+    shadow p-5 mb-5 bg-white rounded" id='edit_objectResearch' action="" method="post">
+            {% csrf_token %}
+        {% if edit_mode %}
+            <div class="fieldWrapper ">
+                {{ form.id.errors }}
+
+                <label for="{{ form.id.id_for_label }}">id:</label>
+                {{ form.id}}
+            </div>
+        {% endif %}
+            <div class="fieldWrapper ">
+                {{ form.name.errors }}
+                  <img class="" src="{% static 'img/icons/title.svg' %}"
+                          width="18px" alt="title icon">
+                <label for="{{ form.name.id_for_label }}">Наименование:</label>
+                {{ form.name}}
+            </div>
+            <div class="fieldWrapper">
+                {{ form.description.errors }}
+                 <img class="" src="{% static 'img/icons/information.svg' %}"
+                          width="18px" alt="info icon">
+                <label for="{{ form.description.id_for_label }}">Описание:</label>
+                {{ form.description }}
+            </div>
+
+        {% if edit_mode %}
+                <div class="fieldWrapper mt-2">
+                    {{ form.author.errors }}
+                    <i class="bi bi-file-earmark-person "></i>
+                    <label for="{{ form.author.id_for_label }}">Автор создания:</label>
+                    <b>{{ form.author }}</b>
+                </div>
+
+                <div class="fieldWrapper ">
+                    {{ form.date_create.errors }}
+                    <i class="bi bi-calendar-date"></i>
+                    <label for="{{ form.date_create.id_for_label }}">Дата создания исследования:</label>
+                    {{ form.date_create }}
+                </div>
+        {% endif %}
+
+        <div class="d-flex justify-content-between mb-2">
+            <button form='edit_objectResearch' type="submit" class="btn btn-primary mt-3">
+                {{ btn_title }}
+            </button>
+        {% if edit_mode %}
+            <button href="javascript:void()" form='delete_form' type='button' onclick="delete_question()"
+                    class="btn btn-danger mt-3 ms-5">
+                    Удалить
+            </button>
+        {% endif %}
+        </div>
+    </form>
+
+
+    {% if edit_mode %}
+            <form id='delete_form' action="{% url 'delete_objectResearch-page'  id_objectResearch  %}" method="post">
+                                {% csrf_token %}
+            </form>
+                            <script>
+                                function delete_question(){
+                                    if (confirm('Вы уверены?')){
+                                        document.getElementById('delete_form').submit()
+                                    }
+                                }
+                            </script>
+    {% endif %}
+</div>
+
+{% endblock %}
